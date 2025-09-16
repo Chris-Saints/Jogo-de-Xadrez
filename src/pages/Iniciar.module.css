@@ -1,0 +1,93 @@
+.containerPrincipal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    gap: 5em;
+
+    width: 100%;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+
+.bBranco {
+    box-sizing: border-box;
+    padding: 1em 2em;
+    cursor: pointer;
+    background: var(--gray-800);
+    font-weight: 800;
+
+    border-radius: 8px;
+
+    color: var(--white);    
+}
+
+
+.bBranco:hover {
+    background-color: var(--white);
+    color: black;
+    font-weight: 800;
+}
+
+.bPreto {
+    box-sizing: border-box;
+    padding: 1em 2em;
+    cursor: pointer;
+    background: var(--gray-800);
+    font-weight: 800;
+
+    border-radius: 8px;
+
+    color: var(--white);
+}
+
+.bPreto:hover {
+    background-color: black;
+    font-weight: 800;
+}
+
+.container__Escolhas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    gap: 1em;
+
+}
+
+.escolhas__Botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2em;
+}
+
+.bIniciar {
+    box-sizing: border-box;
+    padding: 1em 2em;
+    cursor: pointer;
+    background: var(--gray-800);
+    font-weight: 800;
+
+    border-radius: 8px;
+
+    color: var(--white);
+    border: 4px solid black;
+    
+}
+
+.bIniciar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bIniciar:hover {
+    background: var(--gray-600);
+}
