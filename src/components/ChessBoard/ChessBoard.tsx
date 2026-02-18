@@ -1,31 +1,15 @@
 import { useEffect, useState} from "react";
-import { movimentoValidoPeao } from "../movimentos/Peao";
-import { movimentovalidoTorre } from "../movimentos/Torre";
-import { movimentoValidoBispo } from "../movimentos/Bispo";
-import { movimentoValidoRainha } from "../movimentos/Rainha";
-import { movimentoValidoRei } from "../movimentos/Rei";
-import { movimentovalidoCavalo } from "../movimentos/Cavalo";
-import { reiEmXeque } from "../movimentos/ReiEmXeque";
-import { xequeMate } from "../funcionalidades/XequeMate";
+import { movimentoValidoPeao } from "../../services/Peao";
+import { movimentovalidoTorre } from "../../services/Torre";
+import { movimentoValidoBispo } from "../../services/Bispo";
+import { movimentoValidoRainha } from "../../services/Rainha";
+import { movimentoValidoRei } from "../../services/Rei";
+import { movimentovalidoCavalo } from "../../services/Cavalo";
+import { reiEmXeque } from "../../services/ReiEmXeque";
+import { xequeMate } from "../../services/XequeMate";
 
-import style from "./ChessBoard.module.css"
-
-
-//interface base para o roque funcionar
-export interface EstadoRoque {
-    reiBrancoMovido: boolean;
-    torreBrancaDireitaMovida: boolean;
-    torreBrancaEsquerdaMovida: boolean;
-    reiPretoMovido: boolean;
-    torrePretaDireitaMovida: boolean;
-    torrePretaEsquerdaMovida: boolean;
-}
-
-//Para os numeros e letras laterais
-const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-const numeros = ['8', '7', '6', '5', '4', '3', '2', '1'];
-
-
+import styles from "./ChessBoard.module.css"
+import { letras, numeros, pecaUnicode, posicoesIniciais, type EstadoRoque, type PecaAtual, type Promocao } from "../../utils/utils";
 
 
 //Tipo para a cor escolhida
@@ -33,33 +17,7 @@ type Props = {
     corJogador: string
 }
 
-//Variavel que muda as letras colocadas pelas Peças
-const pecaUnicode: Record<string, string> = {
-    P: '♙',
-    T: '♖',
-    C: '♘',
-    B: '♗',
-    Q: '♕',
-    K: '♔',
-    p: '♟︎',
-    t: '♜',
-    c: '♞',
-    b: '♝',
-    q: '♛',
-    k: '♚'
-}
 
-//Variavel que guarda as posicoes iniciais do tabuleiro
-const posicoesIniciais: (string | null)[][] = [
-    ['t', 'c', 'b', 'q', 'k', 'b', 'c', 't'], //Pretas
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], //Pretas
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], //Brancas
-    ['T', 'C', 'B', 'Q', 'K', 'B', 'C', 'T'], //Brancas
-];
 
 
 export function ChessBoard({ corJogador }: Props) {
@@ -74,7 +32,7 @@ export function ChessBoard({ corJogador }: Props) {
     const [tabuleiro, setTabuleiro] = useState<(string | null)[][]>(posicoesIniciais); 
 
     //Variavel que guarda a informação da peça selecionada
-    const [selecionado, setSelecionado] = useState<{linha: number, coluna: number} | null>(null);
+    const [selecionado, setSelecionado] = useState<PecaAtual| null>(null);
 
     const[mensagemVitoria, setMensagemVitoria] = useState<string | null>(null);
 
@@ -89,17 +47,11 @@ export function ChessBoard({ corJogador }: Props) {
     });
 
     //Variavel que guarda a informção do peao que chegou até a ultima casa e pode ser promovido
-    const [promocaoPendente, setPromocaoPendente] = useState<{
-        linha: number;
-        coluna: number;
-        ehBranco: boolean;
-    } | null>(null);
+    const [promocaoPendente, setPromocaoPendente] = useState<Promocao| null>(null);
 
     //Variavel que guarda a informação se o rei esta ameacado ou nao
-    const [reiAmeacado, setReiAmeacado] = useState<{
-        linha: number;
-        coluna: number;
-    } | null>(null);
+    const [reiAmeacado, setReiAmeacado] = useState<PecaAtual | null>(null);
+
 
 
 
@@ -110,9 +62,11 @@ export function ChessBoard({ corJogador }: Props) {
 
     //acha o rei em xeque. verifica se esta em situacao de xeque e pinta a casa
     useEffect(() =>{
-        const novaMatriz = tabuleiro.map((l) => [...l]);
-        const encontrarRei = (ehBranco: boolean) => {
-            const rei = ehBranco ? 'K' : 'k' ;
+        const novaMatriz = tabuleiro.map((l) => [...l]); //cria uma copia do tabuleiro
+
+        //Uma função que recebe cor e procura o rei dentro da copia do tabuleiro
+        const encontrarRei = (cor: boolean) => {
+            const rei = cor ? 'K' : 'k' ;
             for (let linha = 0; linha < 8; linha++) {
                 for (let coluna = 0; coluna < 8; coluna++) {
                     if (novaMatriz[linha][coluna] === rei){
@@ -143,7 +97,7 @@ export function ChessBoard({ corJogador }: Props) {
     //Const que sera renderizada
     const casas = ordemDasLinhas.map((linha) => 
         
-        //O array.from({length: 8}) Cria um array com 8 posicoes vazias. O segundo argumento é uma funcao que recebe (_,i), sendo _ o valor  (que nesse caso é undefined) e o i sendo i indice ou seja se 0,7. Assim conseguindo controlar o numero de elementos e acessar os indices para crias as posicoes do tabuleiro
+        //O array.from({length: 8}) Cria um array com 8 posicoes vazias. O segundo argumento é uma funcao que recebe (_,i), sendo _ o valor  (que nesse caso é undefined) e o i sendo i indice ou seja se 0,7. Assim conseguindo controlar o numero de elementos e acessar os indices para criar as posicoes do tabuleiro
 
         Array.from({ length: 8 }, (_, coluna) => { //E para cada linha criamos uma outra lista de 8 elementos representando as colunas
         
@@ -155,8 +109,6 @@ export function ChessBoard({ corJogador }: Props) {
 
             <div 
                 onClick={() => { //Ao clicar
-
-                    console.log("Mensagem de vitória:", mensagemVitoria);
 
                     if (mensagemVitoria) return;
 
@@ -177,7 +129,6 @@ export function ChessBoard({ corJogador }: Props) {
                             } else {
 
                                 setSelecionado(casaClicada) //Salva a origem da peça
-
                             }
 
                         }
@@ -383,10 +334,13 @@ export function ChessBoard({ corJogador }: Props) {
                         setSelecionado(null)  // Limpa a variavel
                     }
                 }}
+
+
                 key={`${linha}-${coluna}`} 
+
+                
+                className={styles.casas}
                 style={{
-                    width: '60px', 
-                    height: '60px', 
                     backgroundColor:
                         reiAmeacado?.linha === linha && reiAmeacado?.coluna === coluna
                         ? 'red'
@@ -394,12 +348,6 @@ export function ChessBoard({ corJogador }: Props) {
                         ? 'var(--gray-100)'
                         : 'var(--gray-600)',
                     border: selecionado?.linha === linha && selecionado?.coluna === coluna ? '2px solid yellow' : '1.5px solid black',
-                    fontSize: '40px',
-                    textAlign: 'center',
-                    boxSizing: 'border-box',
-                    lineHeight: '60px',
-                    cursor: 'pointer',
-                    fontWeight: 500
                 }}
             > 
                 {peca ? pecaUnicode[peca] : ''}
@@ -410,98 +358,89 @@ export function ChessBoard({ corJogador }: Props) {
     )
 
 
+    //Return Oficial
+
+
 
     return (
-        <div style={{color: "black", position: 'relative', width: 540, height: 540, display: 'grid', gridTemplate: 'auto 1fr auto / auto 1fr auto' }}>
+        <div className={styles.chessGameContainer} >
             
             {/* Letras no topo */}
             <div />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 60px)', textAlign: 'center', paddingBottom: 10 }}>
-            {letrasVisiveis.map((letra) => (
-                <div key={letra} style={{ color: "white", fontWeight: 'bold' }}>{letra}</div>
-            ))}
+
+            <div className={styles.divLetrasNoTopo}>
+
+                {letrasVisiveis.map((letra) => (
+
+                    <div key={letra} style={{ color: "white", fontWeight: 'bold' }}>{letra}</div>
+
+                ))}
+                
             </div>
+
             <div />
 
             {/* Números à esquerda + Tabuleiro + à direita */}
-            <div style={{ display: 'grid', gridTemplateRows: 'repeat(8, 60px)', textAlign: 'center' }}>
-            {numerosVisiveis.map((num) => (
-                <div key={num} style={{ color: "white", paddingRight: 10, fontWeight: 'bold', lineHeight: '60px' }}>{num}</div>
-            ))}
+            <div className={styles.divNumerosAoLado}>
+
+                {numerosVisiveis.map((num) => (
+
+                    <div key={num} className={styles.numeros}>{num}</div>
+
+                ))}
+
             </div>
 
-            <div style={{ position: 'relative', width: 480, height: 480 }}>
-                
 
 
-            <div
-                style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(8, 60px)',
-                gridTemplateRows: 'repeat(8, 60px)'
-                }}
-            >
-                
-                {casas.flat()}
-            </div>
+            <div className={styles.sectionTabuleiroContainer}>
+            
 
-            {mensagemVitoria && (
-                    <div
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                        color: 'white',
-                        fontSize: '28px',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 20,
-                        textAlign: 'center',
-                        padding: '1rem'
-                    }}
-                    >
-                    {mensagemVitoria}
+                {/* Renderização do tabuleiro */}
+                <div className={styles.renderizacaoDoTabuleiro}>
+                    {casas.flat()}
+                </div>
+
+
+                {/* Renderização da mensagem de vitoria. */}
+                {mensagemVitoria && (
+                    <div className={styles.mensagemVitoria}>
+                        {mensagemVitoria}
                     </div>
                 )}
 
-            {promocaoPendente && (
-                <div
-                    className={style.duvidaDois}
-                style={{
-                    position: 'absolute',
-                    top: promocaoPendente.linha * 60 + 60,
-                    left: promocaoPendente.coluna * 60,
-                    display: 'flex',
-                    background: '#f0f0f0',
-                    border: '2px solid black',
-                    zIndex: 10,
-                }}
-                >
-                {['q', 't', 'c', 'b'].map((tipo) => {
-                    const peca = promocaoPendente.ehBranco ? tipo.toUpperCase() : tipo;
 
-                    return (
+                {/* Validação e Renderização da promoção para o peão quando ele chegar na borda do tabuleiro */}
+                {promocaoPendente && (
                     <div
-                        className={style.duvida}
-                        key={tipo}
-                        onClick={() => {
-                        const novaMatriz = tabuleiro.map((l) => [...l]);
-                        novaMatriz[promocaoPendente.linha][promocaoPendente.coluna] = peca;
-                        setTabuleiro(novaMatriz);
-                        setPromocaoPendente(null);
+                        className={styles.promocaoContainer}
+                        style={{
+                            position: 'absolute',
+                            top: promocaoPendente.linha * 60 + 60,
+                            left: promocaoPendente.coluna * 36,
                         }}
                     >
-                        {pecaUnicode[peca]}
+                        {['q', 't', 'c', 'b'].map((tipo) => {
+                            const peca = promocaoPendente.ehBranco ? tipo.toUpperCase() : tipo;
+
+                            return (
+                            <div
+                                className={styles.promocaoPeca}
+                                key={tipo}
+                                onClick={() => {
+                                    const novaMatriz = tabuleiro.map((l) => [...l]);
+                                    novaMatriz[promocaoPendente.linha][promocaoPendente.coluna] = peca;
+
+                                    setTabuleiro(novaMatriz);
+                                    setPromocaoPendente(null);
+                                }}
+                            >
+                                {pecaUnicode[peca]}
+                            </div>
+                            );
+                        })}
                     </div>
-                    );
-                })}
-                </div>
-            )}
+                )}
             </div>
 
 

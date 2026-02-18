@@ -1,10 +1,10 @@
-import { movimentoValidoBispo } from "../movimentos/Bispo";
-import { movimentovalidoCavalo } from "../movimentos/Cavalo";
-import { movimentoValidoPeao } from "../movimentos/Peao";
-import { movimentoValidoRainha } from "../movimentos/Rainha";
-import { movimentoValidoRei } from "../movimentos/Rei";
-import { reiEmXeque } from "../movimentos/ReiEmXeque";
-import { movimentovalidoTorre } from "../movimentos/Torre";
+import { movimentoValidoBispo } from "./Bispo";
+import { movimentovalidoCavalo } from "./Cavalo";
+import { movimentoValidoPeao } from "./Peao";
+import { movimentoValidoRainha } from "./Rainha";
+import { movimentoValidoRei } from "./Rei";
+import { reiEmXeque } from "./ReiEmXeque";
+import { movimentovalidoTorre } from "./Torre";
 
 export function xequeMate(tabuleiro: (string | null)[][], ehBranco: boolean): boolean {
 

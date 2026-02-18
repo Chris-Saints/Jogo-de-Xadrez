@@ -1,10 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Iniciar } from "./pages/Iniciar";
-import { Game } from "./pages/Game";
-
+import { Iniciar } from "./pages/Iniciar/Iniciar";
 import style  from "./App.module.css"
-
 import './global.css';
+import { Game } from "./pages/Game/Game";
 
 export function App() {
   return (

@@ -4,12 +4,11 @@ import { useNavigate } from "react-router-dom";
 import style from "./Iniciar.module.css"
 
 export function Iniciar() {
+    const navigate = useNavigate();
 
     const [escolha, setEscolha] = useState<string | null>(null); 
     
     //o use state funciona da seguinte forma é uma const que guarda uma informação e uma função, essa função faz com que seja possivel mudar essa informação ou acrescentar mais de uma informacao se for criado como um array. Logo apos voce diz que aquela variavel é um usestate, pode tipalo e entre parenteses coloca seu valor inicial
-
-    const navigate = useNavigate();
 
     function selecionarBranco() {
         setEscolha('branco')
@@ -26,7 +25,7 @@ export function Iniciar() {
 
             <div className={style.container__Escolhas}>
 
-                <span>Antes de começar escolha a cor da sua peça:</span>
+                <span>Antes de começar escolha a cor das suas peças:</span>
 
                 <div className={style.escolhas__Botoes}>
 

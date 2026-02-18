@@ -1,6 +1,8 @@
+import type { PecaAtual } from "../utils/utils";
+
 export function movimentoValidoRainha(
 
-    origem: {linha:number, coluna: number},
+    origem: PecaAtual,
     destino: {linha: number, coluna: number},
     peca: string,
     tabuleiro: (string | null)[][]
@@ -38,7 +40,7 @@ export function movimentoValidoRainha(
 
     } else if(movimentoVertical) {
 
-        const passo = deltaLinha > 0 ? 1 : -1; //Precisa desse passo para caso ele va para uma direcao com nnumeros positivos ou negativos, precisa disso para fazer a conta dos passos dados
+        const passo = deltaLinha > 0 ? 1 : -1; //Precisa desse passo para caso ele va para uma direcao com numeros positivos ou negativos, precisa disso para fazer a conta dos passos dados
 
         for ( let i = origem.linha + passo; i !== destino.linha; i += passo) { //Passa por cada casa ate o destino e verifica se existem alguma peça no meio
 

@@ -1,6 +1,7 @@
-export function movimentoValidoBispo(
+import type { PecaAtual } from "../utils/utils";
 
-    origem: {linha:number, coluna: number},
+export function movimentoValidoBispo(
+    origem: PecaAtual,
     destino: {linha: number, coluna: number},
     peca: string,
     tabuleiro: (string | null)[][]
@@ -25,7 +26,7 @@ export function movimentoValidoBispo(
         let linha = origem.linha + passoLinha;
         let coluna = origem.coluna + passoColuna;
 
-        while(linha !== destino.linha && coluna !== destino.coluna) { //enquanto linha diferente de linha do destino  e coluna diferente de coluna do destino faça:
+        while(linha !== destino.linha) { //enquanto linha diferente de linha do destino  e coluna diferente de coluna do destino faça:
             if(tabuleiro[linha][coluna]) return false; //se o valor for true retorne false
 
             //se for false, aumente ou diminuia a linha e coluna por 1

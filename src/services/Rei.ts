@@ -1,9 +1,10 @@
-import type { EstadoRoque } from "../components/ChessBoard";
+
+import type { EstadoRoque, PecaAtual } from "../utils/utils";
 import { reiEmXeque } from "./ReiEmXeque";
 
 export function movimentoValidoRei(
 
-    origem: {linha:number, coluna: number},
+    origem: PecaAtual,
     destino: {linha: number, coluna: number},
     peca: string,
     tabuleiro: (string | null)[][],

@@ -1,6 +1,8 @@
+import type { PecaAtual } from "../utils/utils";
+
 export function movimentovalidoTorre(
 
-    origem: {linha: number, coluna: number},
+    origem: PecaAtual,
     destino: {linha: number, coluna: number},
     peca: string,
     tabuleiro: (string | null)[][]
